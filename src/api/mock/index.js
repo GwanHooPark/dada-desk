@@ -11,13 +11,9 @@ const fetch = (mockData, time = 0) => {
 
 export default {
 	fetchTabGroups() {
-		console.log('mock fetchTabGroups');
-		console.log(groups);
 		return fetch(groups, 1000);
 	},
 	fetchTabs() {
-		console.log('mock fetchTabs');
-		console.log(tabs);
 		return fetch(tabs, 1000);
 	},
 };
