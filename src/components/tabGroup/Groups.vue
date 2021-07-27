@@ -10,8 +10,7 @@
 				ghost-class="moving-card"
 				class="w-full max-w-md my-1 overflow-y-auto h-1/2"
 				tag="ul"
-				:move="checkMove"
-				@end="onEnd"
+				:move="moveTab"
 			>
 				<TabCard v-for="tab in group.tabs" :key="tab.id" :tab="tab" @on-edit="onEdit" @on-delete="onDelete"></TabCard>
 			</draggable>
@@ -72,7 +71,7 @@ export default {
 		//잠시주석
 		const tabs = await this.getTabs();
 		this.tabs = Object.keys(tabs).map(o => tabs[o]);
-
+		console.log(this.tabs);
 		const groups = await this.getTabGroups();
 		this.groups = Object.keys(groups).map(o => {
 			return {
@@ -99,11 +98,18 @@ export default {
 		getTabGroups() {
 			return client.fetchTabGroups();
 		},
-		checkMove(e) {
+		moveTab(e) {
+			console.log(e);
 			console.log('Future index: ' + e.draggedContext.futureIndex);
-		},
-		onEnd() {
-			console.log('change');
+			const draggedContext = e.draggedContext;
+			const relatedContext = e.relatedContext;
+			if (draggedContext.element.groupId != relatedContext.element.groupId) {
+				console.log('diff');
+				client.fetchTabOrderToOtherGroup(relatedContext.element.groupId, draggedContext.element.id, draggedContext.futureIndex);
+			} else {
+				console.log('same');
+				client.fetchTabOrder(e.draggedContext.element.id, e.draggedContext.futureIndex);
+			}
 		},
 		// async getDetailGroupInfo(group) {
 		// 	console.log(group.id);
