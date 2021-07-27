@@ -11,9 +11,9 @@ const fetch = (mockData, time = 0) => {
 
 export default {
 	fetchTabGroups() {
-		return fetch(groups, 1000);
+		return fetch(groups, 500);
 	},
 	fetchTabs() {
-		return fetch(tabs, 1000);
+		return fetch(tabs, 500);
 	},
 };
