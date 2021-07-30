@@ -1,14 +1,13 @@
 export default {
 	fetchTabs() {
-		console.log('api chrome');
 		return chrome.tabs.query({ currentWindow: true });
 	},
 	fetchTabGroups() {
-		console.log('api chrome');
 		return chrome.tabGroups.query({ windowId: -2 });
 	},
-	fetchTabOrder(tabId, index) {
+	fetchTabOrder(tabId, index, groupId) {
 		chrome.tabs.move(tabId, { index: index });
+		//chrome.tabs.group({ groupId: groupId, tabIds: tabId });
 	},
 	fetchTabOrderToOtherGroup(groupId, tabId, index) {
 		chrome.tabs.group({ groupId: groupId, tabIds: tabId });

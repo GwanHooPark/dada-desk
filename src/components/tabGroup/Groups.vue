@@ -11,8 +11,9 @@
 				class="w-full max-w-md my-1 overflow-y-auto h-1/2"
 				tag="ul"
 				:move="moveTab"
+				@end="moveEnd"
 			>
-				<TabCard v-for="tab in group.tabs" :key="tab.id" :tab="tab" @on-edit="onEdit" @on-delete="onDelete"></TabCard>
+				<TabCard v-for="tab in group.tabs" :key="tab.id" :tab="tab" @on-delete="onDelete"></TabCard>
 			</draggable>
 		</div>
 	</div>
@@ -31,33 +32,7 @@ export default {
 	data() {
 		return {
 			groups: [],
-			tabs: [
-				{
-					id: 1,
-					name: '네이버',
-					avatar: 'https://www.naver.com/favicon.ico?1',
-				},
-				{
-					id: 2,
-					name: 'Violet Gates abcr 가나다 라마바',
-					avatar: 'https://portal.daou.co.kr/resources/images/favicon/DO_favicon.ico?rev=202106032023',
-				},
-				{
-					id: 3,
-					name: 'Steve Jobs',
-					avatar: 'https://www.clien.net/service/image/favicon.ico',
-				},
-				{
-					id: 4,
-					name: 'Yassine Smith',
-					avatar: 'https://funshop.akamaized.net/www/favicon.ico',
-				},
-				{
-					id: 5,
-					name: 'Senior Saez',
-					avatar: 'https://www.google.co.kr/favicon.ico',
-				},
-			],
+			tabs: [],
 		};
 	},
 	async mounted() {
@@ -69,25 +44,11 @@ export default {
 		// console.log(this.tabGroups);
 		//this.tabGroups = this.getTabGroupsInfo(currentGroups);
 		//잠시주석
-		const tabs = await this.getTabs();
-		this.tabs = Object.keys(tabs).map(o => tabs[o]);
-		console.log(this.tabs);
-		const groups = await this.getTabGroups();
-		this.groups = Object.keys(groups).map(o => {
-			return {
-				id: groups[o].id,
-				color: groups[o].color,
-				title: groups[o].title,
-				tabs: this.tabs.filter(t => t.groupId == groups[o].id),
-			};
-		});
+		this.getTabInfo();
 	},
 	methods: {
 		groupColor(color) {
 			return `border-${color}-500`;
-		},
-		onEdit(user) {
-			alert(`Editing ${user.name}`);
 		},
 		onDelete(user) {
 			alert(`Deleting ${user.name}`);
@@ -98,8 +59,26 @@ export default {
 		getTabGroups() {
 			return client.fetchTabGroups();
 		},
+		async getTabInfo() {
+			const tabs = await this.getTabs();
+			this.tabs = Object.keys(tabs).map(o => tabs[o]);
+			const groups = await this.getTabGroups();
+			this.groups = Object.keys(groups).map(o => {
+				console.log(groups[o]);
+				return {
+					id: groups[o].id,
+					color: groups[o].color,
+					title: groups[o].title,
+					tabs: this.tabs.filter(t => t.groupId == groups[o].id),
+				};
+			});
+			console.log('getTabInfo');
+			console.log(this.groups);
+		},
+		moveEnd(e) {
+			this.getTabInfo();
+		},
 		moveTab(e) {
-			console.log(e);
 			console.log('Future index: ' + e.draggedContext.futureIndex);
 			const draggedContext = e.draggedContext;
 			const relatedContext = e.relatedContext;
@@ -108,20 +87,10 @@ export default {
 				client.fetchTabOrderToOtherGroup(relatedContext.element.groupId, draggedContext.element.id, draggedContext.futureIndex);
 			} else {
 				console.log('same');
-				client.fetchTabOrder(e.draggedContext.element.id, e.draggedContext.futureIndex);
+				console.log(draggedContext.element);
+				client.fetchTabOrder(draggedContext.element.id, draggedContext.futureIndex, draggedContext.element.groupId);
 			}
 		},
-		// async getDetailGroupInfo(group) {
-		// 	console.log(group.id);
-		// 	await chrome.tabs.query(
-		// 		{
-		// 			groupId: group.id,
-		// 		},
-		// 		function(o) {
-		// 			console.log(o);
-		// 		},
-		// 	);
-		// },
 	},
 };
 </script>
