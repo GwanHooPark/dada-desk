@@ -9,7 +9,7 @@ export default {
 		chrome.tabs.move(tabId, { index: index });
 		//chrome.tabs.group({ groupId: groupId, tabIds: tabId });
 	},
-	fetchTabOrderToOtherGroup(groupId, tabId, index) {
-		chrome.tabs.group({ groupId: groupId, tabIds: tabId });
+	fetchTabOrderToOtherGroup(tabId, groupId) {
+		chrome.tabs.group({ tabIds: tabId, groupId: groupId });
 	},
 };

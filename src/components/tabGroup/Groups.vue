@@ -1,7 +1,7 @@
 <template>
 	<div id="app" class="min-h-screen w-screen bg-gray-300 flex items-center p-4">
 		<div v-for="group in groups" :key="group.id" class="border-gray-200 rounded-md p-2 m-1 bg-gray-200" style="width:220px">
-			<div :class="groupColor(group.color)" class="border-gray-500 border-l-4 text-base font-semibold p-1 text-gray-500">{{ group.title }}</div>
+			<div :class="groupColor(group.color)" class="border-l-4 text-base font-semibold p-1 text-gray-500">{{ group.title }}</div>
 			<draggable
 				:list="group.tabs"
 				:animation="150"
@@ -48,6 +48,7 @@ export default {
 	},
 	methods: {
 		groupColor(color) {
+			console.log(color);
 			return `border-${color}-500`;
 		},
 		onDelete(user) {
@@ -82,13 +83,20 @@ export default {
 			console.log('Future index: ' + e.draggedContext.futureIndex);
 			const draggedContext = e.draggedContext;
 			const relatedContext = e.relatedContext;
+			console.log(
+				` [draggedContext.element.groupId] : ${draggedContext.element.groupId} [relatedContext.element.groupId] : ${relatedContext.element.groupId}`,
+			);
 			if (draggedContext.element.groupId != relatedContext.element.groupId) {
 				console.log('diff');
-				client.fetchTabOrderToOtherGroup(relatedContext.element.groupId, draggedContext.element.id, draggedContext.futureIndex);
+				console.log(e);
+				client.fetchTabOrderToOtherGroup(draggedContext.element.id, relatedContext.element.groupId);
 			} else {
 				console.log('same');
-				console.log(draggedContext.element);
-				client.fetchTabOrder(draggedContext.element.id, draggedContext.futureIndex, draggedContext.element.groupId);
+				console.log(e);
+				console.log(draggedContext);
+				client.fetchTabOrder(relatedContext.element.id, draggedContext.element.index); //대상 index를 드래그한 index로 변경
+				draggedContext.element.index = relatedContext.element.index; //드래그 후 드랍하지 않고 연속으로 움직을때 순차적으로 바꿔줘야함
+				client.fetchTabOrder(draggedContext.element.id, relatedContext.element.index); //드래그 index를 대상 index로 변경
 			}
 		},
 	},
