@@ -49,7 +49,7 @@ export default {
 	methods: {
 		groupColor(color) {
 			console.log(color);
-			return `border-${color}-500`;
+			return `border-${color}`;
 		},
 		onDelete(user) {
 			alert(`Deleting ${user.name}`);
@@ -77,6 +77,8 @@ export default {
 			console.log(this.groups);
 		},
 		moveEnd(e) {
+			console.log('moveEnd');
+			console.log(e);
 			this.getTabInfo();
 		},
 		moveTab(e) {
@@ -89,6 +91,7 @@ export default {
 			if (draggedContext.element.groupId != relatedContext.element.groupId) {
 				console.log('diff');
 				console.log(e);
+				console.log(draggedContext.futureIndex);
 				client.fetchTabOrderToOtherGroup(draggedContext.element.id, relatedContext.element.groupId);
 			} else {
 				console.log('same');
@@ -107,5 +110,26 @@ export default {
 	opacity: 0.5;
 	background: #f7fafc;
 	border: 1px solid #4299e1;
+}
+.border-green {
+	border-left: 2px solid green;
+}
+.border-red {
+	border-left: 2px solid red;
+}
+.border-grey {
+	border-left: 2px solid grey;
+}
+.border-blue {
+	border-left: 2px solid blue;
+}
+.border-cyan {
+	border-left: 2px solid cyan;
+}
+.border-pink {
+	border-left: 2px solid pink;
+}
+.border-yellow {
+	border-left: 2px solid yellow;
 }
 </style>
